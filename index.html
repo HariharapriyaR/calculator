@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simple Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    #calculator {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      width: 300px;
+    }
+    #result {
+      width: 100%;
+      padding: 15px;
+      font-size: 1.5rem;
+      text-align: right;
+      border: 2px solid #0077cc;
+      border-radius: 5px;
+      margin-bottom: 15px;
+      box-sizing: border-box;
+      outline: none;
+    }
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    button {
+      padding: 15px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      background: #0077cc;
+      color: white;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #005fa3;
+    }
+    button.operator {
+      background: #ff8c00;
+    }
+    button.operator:hover {
+      background: #e07b00;
+    }
+    button.clear {
+      background: #ff4c4c;
+    }
+    button.clear:hover {
+      background: #e04343;
+    }
+  </style>
+</head>
+<body>
+
+<div id="calculator">
+  <input type="text" id="result" readonly placeholder="0" />
+  <div class="buttons">
+    <button onclick="appendNumber('7')">7</button>
+    <button onclick="appendNumber('8')">8</button>
+    <button onclick="appendNumber('9')">9</button>
+    <button class="operator" onclick="chooseOperator('/')">÷</button>
+
+    <button onclick="appendNumber('4')">4</button>
+    <button onclick="appendNumber('5')">5</button>
+    <button onclick="appendNumber('6')">6</button>
+    <button class="operator" onclick="chooseOperator('*')">×</button>
+
+    <button onclick="appendNumber('1')">1</button>
+    <button onclick="appendNumber('2')">2</button>
+    <button onclick="appendNumber('3')">3</button>
+    <button class="operator" onclick="chooseOperator('-')">-</button>
+
+    <button onclick="appendNumber('0')">0</button>
+    <button onclick="appendNumber('.')">.</button>
+    <button onclick="compute()">=</button>
+    <button class="operator" onclick="chooseOperator('+')">+</button>
+
+    <button class="clear" onclick="clearAll()" style="grid-column: span 4;">C</button>
+  </div>
+</div>
+
+<script>
+  let currentOperand = '';
+  let previousOperand = '';
+  let operator = null;
+
+  const resultInput = document.getElementById('result');
+
+  function appendNumber(number) {
+    // Prevent multiple decimals
+    if (number === '.' && currentOperand.includes('.')) return;
+    currentOperand = currentOperand.toString() + number.toString();
+    updateDisplay();
+  }
+
+  function chooseOperator(op) {
+    if (currentOperand === '') return;
+    if (previousOperand !== '') {
+      compute();
+    }
+    operator = op;
+    previousOperand = currentOperand;
+    currentOperand = '';
+  }
+
+  function compute() {
+    let computation;
+    const prev = parseFloat(previousOperand);
+    const current = parseFloat(currentOperand);
+    if (isNaN(prev) || isNaN(current)) return;
+    switch (operator) {
+      case '+':
+        computation = prev + current;
+        break;
+      case '-':
+        computation = prev - current;
+        break;
+      case '*':
+        computation = prev * current;
+        break;
+      case '/':
+        computation = current === 0 ? 'Error' : prev / current;
+        break;
+      default:
+        return;
+    }
+    currentOperand = computation.toString();
+    operator = null;
+    previousOperand = '';
+    updateDisplay();
+  }
+
+  function clearAll() {
+    currentOperand = '';
+    previousOperand = '';
+    operator = null;
+    updateDisplay();
+  }
+
+  function updateDisplay() {
+    if (currentOperand === '') {
+      resultInput.value = previousOperand !== '' ? previousOperand : '0';
+    } else {
+      resultInput.value = currentOperand;
+    }
+  }
+</script>
+
+</body>
+</html>
